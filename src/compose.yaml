@@ -1,0 +1,7 @@
+﻿services:
+  wardrivingmapper:
+    image: wardrivingmapper
+    build:
+      context: .
+      dockerfile: WardrivingMapper/Dockerfile
+
