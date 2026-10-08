@@ -11,8 +11,23 @@ window.initMap = function (elementId, lat, lng, zoom) {
         maxZoom: 19
     });
 
-    var baseMaps = { "Street": streets, "Satellite": satellite };
+    var places = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Esri Reference',
+            maxZoom: 19
+        });
+
+    var transportation = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Esri Transportation',
+            maxZoom: 19
+        }
+    );
+
+    var hybrid = L.layerGroup([satellite, places, transportation]);
+
+    var baseMaps = { "Street": streets, "Satellite": satellite, "Hybrid": hybrid };
     L.control.layers(baseMaps).addTo(map);
     streets.addTo(map);
     return map;
-};   
+}; 
