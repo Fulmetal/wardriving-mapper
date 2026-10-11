@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WardrivingMapper.Data;
+namespace WardrivingMapper.Data.DataModels;
 
 public class RawData
 {

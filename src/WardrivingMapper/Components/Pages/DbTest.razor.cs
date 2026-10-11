@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using WardrivingMapper.Data;
+using WardrivingMapper.Data.DataModels;
 
 namespace WardrivingMapper.Components.Pages;
 

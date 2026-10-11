@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WardrivingMapper.Data.DataModels;
 
 namespace WardrivingMapper.Data;
 
