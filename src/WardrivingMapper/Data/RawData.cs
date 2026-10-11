@@ -18,6 +18,6 @@ public class RawData
     public double AltitudeMeters { get; set; }
     public double AccuracyMeters { get; set; }
     public string? RCOIs { get; set; } = null;
-    public int? MfgrId { get; set; }
+    public int? MfgrId { get; set; } = null;
     public string Type { get; set; } = "WIFI";
 }

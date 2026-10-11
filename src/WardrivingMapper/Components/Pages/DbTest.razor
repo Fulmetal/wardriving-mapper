@@ -1,0 +1,53 @@
+@page "/DbTest"
+<h3>DbTest</h3>
+
+<MudButton OnClick="AddRandomRecord">Add random record</MudButton>
+<MudButton OnClick="ClearRawData">Clear raw data</MudButton>
+
+@if (_rawData != null && _rawData.Count > 0)
+{
+    <MudTable Items="@_rawData"
+          Hover="true"
+          Breakpoint="Breakpoint.Sm"
+          LoadingProgressColor="Color.Info">
+
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>MAC</MudTh>
+        <MudTh>SSID</MudTh>
+        <MudTh>Auth Mode</MudTh>
+        <MudTh>First Seen</MudTh>
+        <MudTh>Channel</MudTh>
+        <MudTh>Frequency</MudTh>
+        <MudTh>RSSI</MudTh>
+        <MudTh>Latitude</MudTh>
+        <MudTh>Longitude</MudTh>
+        <MudTh>Altitude (m)</MudTh>
+        <MudTh>Accuracy (m)</MudTh>
+        <MudTh>RCOIs</MudTh>
+        <MudTh>Manufacturer ID</MudTh>
+        <MudTh>Type</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="ID">@context.Id</MudTd>
+        <MudTd DataLabel="MAC">@context.MAC</MudTd>
+        <MudTd DataLabel="SSID">@context.SSID</MudTd>
+        <MudTd DataLabel="Auth Mode">@context.AuthMode</MudTd>
+        <MudTd DataLabel="First Seen">
+            @context.FirstSeen.ToString("yyyy-MM-dd HH:mm:ss")
+        </MudTd>
+        <MudTd DataLabel="Channel">@context.Channel</MudTd>
+        <MudTd DataLabel="Frequency">@context.Frequency</MudTd>
+        <MudTd DataLabel="RSSI">@context.RSSI</MudTd>
+        <MudTd DataLabel="Latitude">@context.CurrentLatitude</MudTd>
+        <MudTd DataLabel="Longitude">@context.CurrentLongitude</MudTd>
+        <MudTd DataLabel="Altitude (m)">@context.AltitudeMeters</MudTd>
+        <MudTd DataLabel="Accuracy (m)">@context.AccuracyMeters</MudTd>
+        <MudTd DataLabel="RCOIs">@context.RCOIs</MudTd>
+        <MudTd DataLabel="Manufacturer ID">@context.MfgrId</MudTd>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+    </RowTemplate>
+
+</MudTable>
+}
