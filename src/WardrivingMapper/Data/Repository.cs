@@ -36,7 +36,36 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : class
     {
         return await DbSet.AsNoTracking().ToListAsync();
     }
-    
+
+    public async Task<PaginatedList<T>> GetPagedAsync(
+            Expression<Func<T, bool>>? filter = null,
+            int pageNumber = 1,
+            int pageSize = 20)
+    {
+        var query = DbSet.AsNoTracking();
+
+        if (filter != null)
+            query = query.Where(filter);
+
+        var totalCount = await query.CountAsync();
+
+        if (pageSize <= 0 || pageNumber < 1)
+            throw new ArgumentException("Invalid page number or page size.");
+
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedList<T>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
+    }
+
     public async Task<T?> FindAsync(TKey id)
     {
         return await DbSet.FindAsync(id);
@@ -58,7 +87,7 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : class
         var e = await FindAsync(id);
 
         if (e == null) return;
-        
+
         DbSet.Remove(e);
     }
 
@@ -66,9 +95,9 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : class
     {
         var keys = list.ToArray();
         await DbSet.Where(e => keys.Contains(((IEntityBase<TKey>)e).Id))
-               .ExecuteDeleteAsync();
+            .ExecuteDeleteAsync();
     }
-    
+
     public async Task<IList<T>> ListAsync(Expression<Func<T, bool>> expression)
     {
         var r = DbSet.AsNoTracking().Where(expression);
