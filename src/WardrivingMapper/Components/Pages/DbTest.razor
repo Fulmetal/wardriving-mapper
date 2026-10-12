@@ -4,7 +4,7 @@
 <MudButton OnClick="AddRandomRecord">Add random record</MudButton>
 <MudButton OnClick="ClearRawData">Clear raw data</MudButton>
 
-@if (_rawData != null && _rawData.Count > 0)
+@if (_rawData != null && _rawData.Any())
 {
     <MudTable Items="@_rawData"
           Hover="true"

@@ -2,13 +2,17 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using WardrivingMapper.Data;
 using WardrivingMapper.Data.DataModels;
+using WardrivingMapper.Data.Interfaces;
+using WardrivingMapper.Data.Repositories;
 
 namespace WardrivingMapper.Components.Pages;
 
 public partial class DbTest : ComponentBase
 {
-    [Inject] AppDbContext DbContext { get; init; } = null!;
-    private List<RawData>? _rawData;
+    [Inject] IRawDataRepository RawDataRepository { get; init; } = null!;
+    [Inject] IUnitOfWork UnitOfWork { get; init; } = null!;
+    
+    private IEnumerable<RawData>? _rawData;
 
     private async Task AddRandomRecord()
     {
@@ -29,8 +33,8 @@ public partial class DbTest : ComponentBase
                 Type = "WIFI"
             };
 
-            DbContext.RawData.Add(raw);
-            await DbContext.SaveChangesAsync();
+            await RawDataRepository.AddAsync(raw);
+            await UnitOfWork.SaveChangesAsync();
 
             await GetAll();
         }
@@ -43,16 +47,17 @@ public partial class DbTest : ComponentBase
 
     private async Task GetAll()
     {
-        _rawData = DbContext.RawData.ToList();
+        _rawData = await RawDataRepository.GetAllAsync();
     }
 
     private async Task ClearRawData()
     {
         try
         {
-            var records = await DbContext.RawData.ToListAsync();
-            DbContext.RawData.RemoveRange(records);
-            await DbContext.SaveChangesAsync();
+            var records = await RawDataRepository.GetAllAsync();
+            var ids = records.ToList().Select(r => r.Id).ToList();
+            await RawDataRepository.DeleteRangeAsync(ids);
+            await UnitOfWork.SaveChangesAsync();
         
             await GetAll();
         }

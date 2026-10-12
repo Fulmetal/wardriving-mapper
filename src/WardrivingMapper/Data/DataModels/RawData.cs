@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WardrivingMapper.Data.DataModels;
 
-public class RawData
+public class RawData : EntityBase<long>
 {
-    [Key]
-    public long Id { get; set; }
     public string MAC { get; set; } = string.Empty; 
     public string SSID { get; set; } = string.Empty; 
     public string AuthMode { get; set; } = string.Empty;

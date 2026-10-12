@@ -24,12 +24,12 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : class
 
     public async Task<long> EntityCountAsync()
     {
-        return await DbSet.CountAsync();
+        return await DbSet.AsNoTracking().CountAsync();
     }
 
-    public async Task<bool> EntityExistsAsync(Func<T, bool> expression)
+    public async Task<bool> EntityExistsAsync(Expression<Func<T, bool>> expression)
     {
-        return await Task.FromResult(DbSet.Any(expression));
+        return await DbSet.AnyAsync(expression);
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
@@ -37,11 +37,6 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : class
         return await DbSet.AsNoTracking().ToListAsync();
     }
     
-    public async Task<IEnumerable<T>> SudoGetAllAsync()
-    {
-        return await DbSet.AsNoTracking().ToListAsync();
-    }
-
     public async Task<T?> FindAsync(TKey id)
     {
         return await DbSet.FindAsync(id);
@@ -67,19 +62,13 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : class
         DbSet.Remove(e);
     }
 
-    public async Task DeleteAsync(T e)
-    {
-        DbSet.Remove(e);
-    }
-
-
     public async Task DeleteRangeAsync(List<TKey> list)
     {
-        var entities = await ListAsync(x => list.Contains(((IEntityBase<TKey>)x).Id));
-
-        DbSet.RemoveRange(entities);
+        var keys = list.ToArray();
+        await DbSet.Where(e => keys.Contains(((IEntityBase<TKey>)e).Id))
+               .ExecuteDeleteAsync();
     }
-
+    
     public async Task<IList<T>> ListAsync(Expression<Func<T, bool>> expression)
     {
         var r = DbSet.AsNoTracking().Where(expression);
@@ -87,20 +76,22 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : class
         return await r.ToListAsync();
     }
 
-    public async Task<T?> SingleAsync(Expression<Func<T, bool>> expression)
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> expression)
     {
         var r = DbSet.AsQueryable();
         return await r.FirstOrDefaultAsync(expression);
     }
 
-    public async Task UpdateAsync(T entity)
+    public Task UpdateAsync(T entity)
     {
         DbSet.Update(entity);
+        return Task.CompletedTask;
     }
 
-    public async Task UpdateRangeAsync(List<T> list)
+    public Task UpdateRangeAsync(List<T> list)
     {
         DbSet.UpdateRange(list);
+        return Task.CompletedTask;
     }
 
     public IQueryable<T> Queriable()

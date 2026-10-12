@@ -2,6 +2,8 @@ using WardrivingMapper.Components;
 using MudBlazor.Services;
 using WardrivingMapper.Data;
 using Microsoft.EntityFrameworkCore;
+using WardrivingMapper.Data.Interfaces;
+using WardrivingMapper.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlite(
             builder.Configuration.GetConnectionString("DefaultConnection")
             ));
+
+builder.Services.AddScoped<Func<AppDbContext?>>(provider => () => provider.GetService<AppDbContext>());
+
+builder.Services.AddScoped<DbFactory>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IRawDataRepository, RawDataRepository>();
 
 var app = builder.Build();
 
