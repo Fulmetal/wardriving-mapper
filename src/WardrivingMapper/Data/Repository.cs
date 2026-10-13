@@ -98,6 +98,11 @@ public class Repository<T, TKey> : IRepository<T, TKey> where T : class
             .ExecuteDeleteAsync();
     }
 
+    public async Task DeleteTable()
+    {
+        await DbSet.ExecuteDeleteAsync();
+    }
+
     public async Task<IList<T>> ListAsync(Expression<Func<T, bool>> expression)
     {
         var r = DbSet.AsNoTracking().Where(expression);

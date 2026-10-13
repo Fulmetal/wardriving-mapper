@@ -1,3 +1,4 @@
+using WardrivingMapper.Data.DataModels;
 namespace WardrivingMapper.Models;
 
 public class InputDataModel
@@ -17,4 +18,28 @@ public class InputDataModel
     public int? MfgrId { get; set; }
     public string Type { get; set; } = "WIFI";
 
+}
+
+public static class InputDataModelMappingExtensions
+{
+    public static RawData ToDataModel(this InputDataModel input)
+    {
+        return new RawData
+        {
+            MAC = input.MAC,
+            SSID = input.SSID,
+            AuthMode = input.AuthMode,
+            FirstSeen = input.FirstSeen,
+            Channel = input.Channel,
+            Frequency = input.Frequency,
+            RSSI = input.RSSI,
+            CurrentLatitude = input.CurrentLatitude,
+            CurrentLongitude = input.CurrentLongitude,
+            AltitudeMeters = input.AltitudeMeters,
+            AccuracyMeters = input.AccuracyMeters,
+            RCOIs = input.RCOIs,
+            MfgrId = input.MfgrId,
+            Type = input.Type
+        };
+    }
 }

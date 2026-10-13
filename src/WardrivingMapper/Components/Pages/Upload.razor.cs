@@ -1,28 +1,26 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using CsvHelper;
-using System.Globalization;
-using CsvHelper.Configuration;
-using System.Text;
+using WardrivingMapper.Services.Interfaces;
+using WardrivingMapper.Models;
 
 namespace WardrivingMapper.Components.Pages;
 
 public partial class Upload : ComponentBase
 {
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
-    private int _recordsCount;
-    private int _wifi;
-    private int _ble;
-    private int _bt;
-    private int _lte;
+    [Inject] public IRawDataService RawDataService { get; set; } = null!;
+    [Inject] public ICsvImportService CsvService { get; set; } = null!;
+
+    private IBrowserFile? _selectedFile;
+    private ImportResult? _importResult;
 
     private async Task OnFileChange(IBrowserFile file)
     {
         try
         {
-            _recordsCount = 0;
-            await PreProcessCsv(file);
+            _selectedFile = file; 
+            _importResult = await CsvService.PreProcessAsync(file);
             StateHasChanged();
         }
         catch (Exception e)
@@ -32,66 +30,24 @@ public partial class Upload : ComponentBase
         }
     }
 
-    private async Task PreProcessCsv(IBrowserFile file, CancellationToken cancellationToken = default)
+    private async Task ImportData()
     {
-        const long maxFileSize = 10 *  1024 * 1024;
-
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        if (_selectedFile == null)
         {
-            HasHeaderRecord = true,
-            BufferSize = 16 * 1024,
-            Delimiter = ","
-        };
-
-        await using var stream = file.OpenReadStream(
-            maxAllowedSize:  maxFileSize,
-            cancellationToken: cancellationToken);
-        
-        using var reader = new StreamReader(
-            stream,
-            Encoding.UTF8,
-            detectEncodingFromByteOrderMarks: true,
-            bufferSize: 16 * 1024);
-
-        using var csv = new CsvReader(reader, config);
-
-        // Read header
-        if (!await csv.ReadAsync())
+            Snackbar.Add("No file selected for import.", Severity.Warning);
             return;
+        }
 
-        if (!await csv.ReadAsync())
-            return;
-
-        csv.ReadHeader();
-
-        // Read every data row
-        while (await csv.ReadAsync())
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            await CsvService.ImportAsync(_selectedFile); 
 
-            var record = csv.GetRecord<Models.InputDataModel>();
-
-            _recordsCount++;
-            switch (record.Type)
-            {
-               case "WIFI":
-                   _wifi++;
-                   break;
-               case "BLE":
-                   _ble++;
-                   break;
-               case "BT":
-                   _bt++;
-                   break;
-               case "LTE":
-                   _lte++;
-                   break;
-                default:
-                    break;
-            }
-
-            // Your processing here
-            //ProcessRecord(record);
+            Snackbar.Add($"Successfully imported {_importResult?.TotalRecords} records.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error importing data: {ex.Message}", Severity.Error);
         }
     }
+
 }

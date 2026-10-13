@@ -4,6 +4,8 @@ using WardrivingMapper.Data;
 using Microsoft.EntityFrameworkCore;
 using WardrivingMapper.Data.Interfaces;
 using WardrivingMapper.Data.Repositories;
+using WardrivingMapper.Services.Interfaces;
+using WardrivingMapper.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,9 @@ builder.Services.AddScoped<DbFactory>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IRawDataRepository, RawDataRepository>();
+
+builder.Services.AddScoped<IRawDataService, RawDataService>();
+builder.Services.AddScoped<ICsvImportService, CsvImportService>();
 
 var app = builder.Build();
 

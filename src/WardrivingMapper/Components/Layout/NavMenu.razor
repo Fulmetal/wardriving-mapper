@@ -2,5 +2,7 @@
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
     <MudNavLink Href="/mapviewer" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Map">Map</MudNavLink>
     <MudNavLink Href="/upload" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Upload">Upload Data</MudNavLink>
-    <MudNavLink Href="/data" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DataObject">Data</MudNavLink>
+    <MudNavGroup Title="Data" Expanded="true" Icon="@Icons.Material.Filled.DataObject">
+        <MudNavLink Href="/rawDataPage" Icon="@Icons.Material.Filled.Source">Raw Data</MudNavLink>
+    </MudNavGroup>
 </MudNavMenu>

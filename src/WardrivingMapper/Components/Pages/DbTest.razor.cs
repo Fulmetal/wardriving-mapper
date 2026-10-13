@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
-using WardrivingMapper.Data;
 using WardrivingMapper.Data.DataModels;
 using WardrivingMapper.Data.Interfaces;
 using WardrivingMapper.Data.Repositories;
@@ -54,9 +52,7 @@ public partial class DbTest : ComponentBase
     {
         try
         {
-            var records = await RawDataRepository.GetAllAsync();
-            var ids = records.ToList().Select(r => r.Id).ToList();
-            await RawDataRepository.DeleteRangeAsync(ids);
+            await RawDataRepository.DeleteTable();
             await UnitOfWork.SaveChangesAsync();
         
             await GetAll();

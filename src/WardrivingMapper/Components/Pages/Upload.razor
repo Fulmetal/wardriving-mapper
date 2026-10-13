@@ -21,14 +21,21 @@
         </MudFileUpload>
     </MudCardContent>
 </MudCard>
+@if (_importResult != null)
+{
+    <MudCard>
+        <MudCardContent>
+            <MudText Typo="Typo.h6">Details</MudText>
+            <MudText Typo="Typo.body1">Number of records: @_importResult.TotalRecords</MudText>
+            <MudText Typo="Typo.body1">Number of WiFi: @_importResult.WifiCount</MudText>
+            <MudText Typo="Typo.body1">Number of BLE: @_importResult.BleCount</MudText>
+            <MudText Typo="Typo.body1">Number of BT: @_importResult.BtCount</MudText>
+            <MudText Typo="Typo.body1">Number of LTE: @_importResult.LteCount</MudText>
+        </MudCardContent>
+    </MudCard>
 
-<MudCard>
-    <MudCardContent>
-        <MudText Typo="Typo.h6">Details</MudText>
-        <MudText Typo="Typo.body1">Number of records: @_recordsCount</MudText>
-        <MudText Typo="Typo.body1">Number of WiFi: @_wifi</MudText>
-        <MudText Typo="Typo.body1">Number of BLE: @_ble</MudText>
-        <MudText Typo="Typo.body1">Number of BT: @_bt</MudText>
-        <MudText Typo="Typo.body1">Number of LTE: @_lte</MudText>
-    </MudCardContent>
-</MudCard>
+    <MudButton OnClick="ImportData" Color="Color.Primary" Variant="Variant.Filled">
+        <MudIcon Icon="@Icons.Material.Filled.Upload"/>
+        Upload
+    </MudButton>
+}

@@ -1,0 +1,58 @@
+@page "/RawDataPage"
+<h3>Raw Data</h3>
+
+@if (_rawData == null)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+}
+else
+{
+<MudTable Items="@_rawData.Items"
+    RowsPerPage="_rawData.PageSize"
+    Hover="true"
+    Breakpoint="Breakpoint.Sm"
+    LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>MAC</MudTh>
+        <MudTh>SSID</MudTh>
+        <MudTh>Auth Mode</MudTh>
+        <MudTh>First Seen</MudTh>
+        <MudTh>Channel</MudTh>
+        <MudTh>Frequency</MudTh>
+        <MudTh>RSSI</MudTh>
+        <MudTh>Latitude</MudTh>
+        <MudTh>Longitude</MudTh>
+        <MudTh>Altitude (m)</MudTh>
+        <MudTh>Accuracy (m)</MudTh>
+        <MudTh>RCOIs</MudTh>
+        <MudTh>Manufacturer ID</MudTh>
+        <MudTh>Type</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="ID">@context.Id</MudTd>
+        <MudTd DataLabel="MAC">@context.MAC</MudTd>
+        <MudTd DataLabel="SSID">@context.SSID</MudTd>
+        <MudTd DataLabel="Auth Mode">@context.AuthMode</MudTd>
+        <MudTd DataLabel="First Seen">
+            @context.FirstSeen.ToString("yyyy-MM-dd HH:mm:ss")
+        </MudTd>
+        <MudTd DataLabel="Channel">@context.Channel</MudTd>
+        <MudTd DataLabel="Frequency">@context.Frequency</MudTd>
+        <MudTd DataLabel="RSSI">@context.RSSI</MudTd>
+        <MudTd DataLabel="Latitude">@context.CurrentLatitude</MudTd>
+        <MudTd DataLabel="Longitude">@context.CurrentLongitude</MudTd>
+        <MudTd DataLabel="Altitude (m)">@context.AltitudeMeters</MudTd>
+        <MudTd DataLabel="Accuracy (m)">@context.AccuracyMeters</MudTd>
+        <MudTd DataLabel="RCOIs">@context.RCOIs</MudTd>
+        <MudTd DataLabel="Manufacturer ID">@context.MfgrId</MudTd>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+    </RowTemplate>
+
+    <PagerContent>
+        <MudPagination SelectedChanged="@PageChanged" Count="@((_rawData.TotalCount + _rawData.PageSize - 1) / _rawData.PageSize)" Class="pa-4"/>
+    </PagerContent>
+
+</MudTable>
+}
