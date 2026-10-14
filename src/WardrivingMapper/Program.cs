@@ -16,9 +16,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 
 builder.Services.AddDbContext<AppDbContext>(options => 
-        options.UseSqlite(
-            builder.Configuration.GetConnectionString("DefaultConnection")
-            ));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+            
 
 builder.Services.AddScoped<Func<AppDbContext?>>(provider => () => provider.GetService<AppDbContext>());
 

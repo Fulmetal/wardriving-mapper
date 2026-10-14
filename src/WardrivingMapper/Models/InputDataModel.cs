@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using WardrivingMapper.Data.DataModels;
 namespace WardrivingMapper.Models;
 
@@ -22,14 +24,17 @@ public class InputDataModel
 
 public static class InputDataModelMappingExtensions
 {
+    private static string Sanitize(string value) => 
+        new(value.Where(c => !char.IsControl(c)).ToArray());
+
     public static RawData ToDataModel(this InputDataModel input)
     {
         return new RawData
         {
             MAC = input.MAC,
-            SSID = input.SSID,
-            AuthMode = input.AuthMode,
-            FirstSeen = input.FirstSeen,
+            SSID = Sanitize(input.SSID),
+            AuthMode = Sanitize(input.AuthMode),
+            FirstSeen = input.FirstSeen.ToUniversalTime(),
             Channel = input.Channel,
             Frequency = input.Frequency,
             RSSI = input.RSSI,

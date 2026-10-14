@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using WardrivingMapper.Data.Interfaces;
 
@@ -19,4 +20,6 @@ public class UnitOfWork(DbFactory dbFactory) : IUnitOfWork
     {
         return await dbFactory.DbContext.Database.BeginTransactionAsync();
     }
+
+    public DbContext GetContext() => dbFactory.DbContext;
 }

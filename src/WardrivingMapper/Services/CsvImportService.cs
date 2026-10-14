@@ -1,9 +1,12 @@
+using System.Data;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using WardrivingMapper.Data.DataModels;
 using WardrivingMapper.Data.Interfaces;
 using WardrivingMapper.Models;
@@ -17,29 +20,36 @@ public class CsvImportService(IRawDataService RawDataService,
 
     public async Task ImportAsync(IBrowserFile file, CancellationToken ct = default)
     {
-        const int chunk = 5000; 
+        const int chunk = 50000; 
         var counter = 0;
         var recordsToAdd = new List<RawData>(chunk);
-
-        var transaction = await unitOfWork.BeginTransactionAsync();
-        await foreach (var record in ReadCsv(file, ct))
+        try 
         {
-            counter++;
-            var dataModel = record.ToDataModel();
-            recordsToAdd.Add(dataModel);
-            if (recordsToAdd.Count >= chunk)
+            await foreach (var record in ReadCsv(file, ct))
             {
-                await RawDataService.AddRawDataAsync(recordsToAdd);
-                unitOfWork.ClearTracker();
-                recordsToAdd.Clear();
-                counter = 0;
+                counter++;
+                var dataModel = record.ToDataModel();
+                recordsToAdd.Add(dataModel);
+                if (recordsToAdd.Count >= chunk)
+                {
+                    await RawDataService.AddRawDataAsync(recordsToAdd);
+                    unitOfWork.ClearTracker();
+                    recordsToAdd.Clear();
+                    counter = 0;
+                }
             }
+
+            await RawDataService.AddRawDataAsync(recordsToAdd);
+            recordsToAdd.Clear();
         }
-
-        await RawDataService.AddRawDataAsync(recordsToAdd);
-        recordsToAdd.Clear();
-
-        transaction.Commit();
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error importing data: {ex.Message}");
+            throw;
+        }
+        finally
+        {
+        }
     }
 
     public async Task<ImportResult> PreProcessAsync(IBrowserFile file, CancellationToken ct = default)
