@@ -22,6 +22,7 @@
       </PackageReference>
       <PackageReference Include="MudBlazor" Version="9.11.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+      <PackageReference Include="PgYeet" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,12 +1,10 @@
-using System.Data;
+using PgYeet;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using WardrivingMapper.Data.DataModels;
 using WardrivingMapper.Data.Interfaces;
 using WardrivingMapper.Models;
@@ -18,7 +16,7 @@ public class CsvImportService(IRawDataService RawDataService,
         IUnitOfWork unitOfWork) : ICsvImportService
 {
 
-    public async Task ImportAsync(IBrowserFile file, CancellationToken ct = default)
+    public async Task ImportAsyncOld(IBrowserFile file, CancellationToken ct = default)
     {
         const int chunk = 50000; 
         var counter = 0;
@@ -50,6 +48,25 @@ public class CsvImportService(IRawDataService RawDataService,
         finally
         {
         }
+    }
+
+    public async Task ImportAsync(IBrowserFile file, CancellationToken ct = default)
+    {
+        var recordsToAdd = new List<RawData>();
+    
+        await foreach (var record in ReadCsv(file, ct))
+        {
+            recordsToAdd.Add(record.ToDataModel());
+        }
+
+        if (recordsToAdd.Count == 0) return;
+
+        var inserted = await unitOfWork.GetContext()
+            .Set<RawData>()
+            .YeetAsync(recordsToAdd, false, ct);  // returns the count inserted
+
+        Console.WriteLine($"Inserted {inserted} records");
+        recordsToAdd.Clear();
     }
 
     public async Task<ImportResult> PreProcessAsync(IBrowserFile file, CancellationToken ct = default)
